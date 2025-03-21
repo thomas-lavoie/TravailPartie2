@@ -1,0 +1,187 @@
+[
+  {
+    "_id": "1",
+    "titre": "Le journal de Montréal",
+    "dispo": true,
+    "prix": 14.99,
+    "type": "périodique",
+    "détails": {
+      "date": "2025-01-02",
+      "périodicité": "quotidien"
+    }
+  },
+  {
+    "_id": "2",
+    "titre": "Science & Vie",
+    "dispo": true,
+    "prix": 9.99,
+    "type": "périodique",
+    "détails": {
+      "date": "2025-03-10",
+      "périodicité": "mensuel"
+    }
+  },
+  {
+    "_id": "3",
+    "titre": "Le Monde",
+    "dispo": false,
+    "prix": 6.50,
+    "type": "périodique",
+    "détails": {
+      "date": "2025-03-21",
+      "périodicité": "quotidien"
+    }
+  },
+  {
+    "_id": "4",
+    "titre": "National Geographic",
+    "dispo": true,
+    "prix": 12.00,
+    "type": "périodique",
+    "détails": {
+      "date": "2025-03-01",
+      "périodicité": "mensuel"
+    }
+  },
+  {
+    "_id": "5",
+    "titre": "The Economist",
+    "dispo": true,
+    "prix": 15.00,
+    "type": "périodique",
+    "détails": {
+      "date": "2025-03-15",
+      "périodicité": "hebdomadaire"
+    }
+  },
+  {
+    "_id": "6",
+    "titre": "1984",
+    "dispo": false,
+    "prix": 24.99,
+    "type": "livre",
+    "exemplaires": [ "ex1", "ex2" ],
+    "détails": {
+      "année": "1949",
+      "maison d'édition": "Secker & Warburg",
+      "auteur": "George Orwell"
+    }
+  },
+  {
+    "_id": "7",
+    "titre": "Le Petit Prince",
+    "dispo": true,
+    "prix": 19.99,
+    "type": "livre",
+    "exemplaires": [ "ex1", "ex2", "ex3" ],
+    "détails": {
+      "année": "1943",
+      "maison d'édition": "Reynal & Hitchcock",
+      "auteur": "Antoine de Saint-Exupéry"
+    }
+  },
+  {
+    "_id": "8",
+    "titre": "Les Misérables",
+    "dispo": true,
+    "prix": 29.99,
+    "type": "livre",
+    "exemplaires": [ "ex1" ],
+    "détails": {
+      "année": "1862",
+      "maison d'édition": "A. Lacroix, Verboeckhoven & Cie",
+      "auteur": "Victor Hugo"
+    }
+  },
+  {
+    "_id": "9",
+    "titre": "Pride and Prejudice",
+    "dispo": false,
+    "prix": 22.50,
+    "type": "livre",
+    "exemplaires": [ "ex1", "ex2", "ex3", "ex4" ],
+    "détails": {
+      "année": "1813",
+      "maison d'édition": "T. Egerton, Whitehall",
+      "auteur": "Jane Austen"
+    }
+  },
+  {
+    "_id": "10",
+    "titre": "To Kill a Mockingbird",
+    "dispo": true,
+    "prix": 18.99,
+    "type": "livre",
+    "exemplaires": [ "ex1", "ex2" ],
+    "détails": {
+      "année": "1960",
+      "maison d'édition": "J.B. Lippincott & Co.",
+      "auteur": "Harper Lee"
+    }
+  },
+  {
+    "_id": "11",
+    "titre": "Tintin et les Picaros",
+    "dispo": true,
+    "prix": 35.00,
+    "type": "BD",
+    "détails": {
+      "année": "1976",
+      "maison d'édition": "Casterman",
+      "auteur": "Hergé",
+      "dessinateur": "Hergé"
+    }
+  },
+  {
+    "_id": "12",
+    "titre": "Lucky Luke: Les Dalton se rachètent",
+    "dispo": true,
+    "prix": 30.00,
+    "type": "BD",
+    "détails": {
+      "année": "1971",
+      "maison d'édition": "Dargaud",
+      "auteur": "René Goscinny",
+      "dessinateur": "Morris"
+    }
+  },
+  {
+    "_id": "13",
+    "titre": "Spirou et Fantasio: Z comme Zorglub",
+    "dispo": false,
+    "prix": 28.50,
+    "type": "BD",
+    "détails": {
+      "année": "1961",
+      "maison d'édition": "Dupuis",
+      "auteur": "André Franquin",
+      "dessinateur": "André Franquin"
+    }
+  },
+  {
+    "_id": "14",
+    "titre": "Les Schtroumpfs et le Cracoucass",
+    "dispo": true,
+    "prix": 27.00,
+    "type": "BD",
+    "détails": {
+      "année": "1969",
+      "maison d'édition": "Dupuis",
+      "auteur": "Peyo",
+      "dessinateur": "Peyo"
+    }
+  },
+  {
+    "_id": "15",
+    "titre": "Gaston Lagaffe: Gala de gaffes",
+    "dispo": true,
+    "prix": 26.00,
+    "type": "BD",
+    "détails": {
+      "année": "1985",
+      "maison d'édition": "Dupuis",
+      "auteur": "André Franquin",
+      "dessinateur": "André Franquin"
+    }
+  }
+]
