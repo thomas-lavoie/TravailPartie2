@@ -27,6 +27,7 @@ while (keep_going)
             {
                 Console.WriteLine(ex.ToString());
             }
+            Console.WriteLine("Appuyer sur une touche pour continuer.");
             Console.ReadKey();
             break;
         case ConsoleKey.Q:
