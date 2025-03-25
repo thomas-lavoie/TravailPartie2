@@ -15,7 +15,10 @@ namespace TravailPartie2
         [BsonElement("détails")]
         public ComicDetails Details { get; set; }
         
-        public Comic() { }
+        public Comic()
+        {
+            Details = new ComicDetails();
+        }
 
         public Comic(string title, bool available, double price, string year, string publisher, string author, string illustrator) : base(title, available, price)
         {

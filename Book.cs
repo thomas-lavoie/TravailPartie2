@@ -19,7 +19,10 @@ namespace TravailPartie2
         [BsonElement("détails")]
         public BookDetails Details { get; set; }
 
-        public Book() { }
+        public Book()
+        {
+            Details = new BookDetails();
+        }
 
         public Book(string title, bool available, double price, string[] copies, string year, string publisher, string author) : base(title, available, price)
         {

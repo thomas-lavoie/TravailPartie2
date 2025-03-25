@@ -15,7 +15,10 @@ namespace TravailPartie2
         [BsonElement("détails")]
         public PeriodicalDetails Details { get; set; }
 
-        public Periodical() { }
+        public Periodical()
+        {
+            Details = new PeriodicalDetails();
+        }
 
         public Periodical(string title, bool available, double price, string date, string frequency) : base(title, available, price)
         {
