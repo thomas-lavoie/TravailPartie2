@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,6 +14,7 @@ namespace TravailPartie2
         public override string Type => "périodique";
 
         [BsonElement("détails")]
+        [JsonProperty("détails")]
         public PeriodicalDetails Details { get; set; }
 
         public Periodical()
@@ -29,9 +31,11 @@ namespace TravailPartie2
     public class PeriodicalDetails
     {
         [BsonElement("date")]
+        [JsonProperty("date")]
         public string Date { get; set; }
 
         [BsonElement("périodicité")]
+        [JsonProperty("périodicité")]
         public string Frequency { get; set; }
 
         public PeriodicalDetails() { }

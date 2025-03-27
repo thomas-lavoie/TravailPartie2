@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,9 +15,11 @@ namespace TravailPartie2
         public override string Type => "livre";
 
         [BsonElement("exemplaires")]
+        [JsonProperty("exemplaires")]
         public string[] Copies { get; set; }
 
         [BsonElement("détails")]
+        [JsonProperty("détails")]
         public BookDetails Details { get; set; }
 
         public Book()
@@ -34,12 +37,15 @@ namespace TravailPartie2
     public class BookDetails
     {
         [BsonElement("année")]
+        [JsonProperty("année")]
         public string Year { get; set; }
 
         [BsonElement("maison d'édition")]
+        [JsonProperty("maison d'édition")]
         public string Publisher { get; set; }
 
         [BsonElement("auteur")]
+        [JsonProperty("auteur")]
         public string Author { get; set; }
 
         public BookDetails() { }

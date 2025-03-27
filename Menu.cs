@@ -1,9 +1,13 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
+using MongoDB.Driver;
+using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace TravailPartie2
 {
@@ -36,7 +40,7 @@ namespace TravailPartie2
                 Console.WriteLine("│                  28 mars 2025                │");
                 Console.WriteLine("+──────────────────────────────────────────────+\n");
 
-                Console.WriteLine("Équipe  :  Keven Bellavance-Boisclair &\n" +
+                Console.WriteLine("Équipe  :  Keven Bellavance Boisclair &\n" +
                                   "           Thomas Lavoie\n");
       
                 Console.WriteLine($"--- {Titre} ---\n");
@@ -88,7 +92,8 @@ namespace TravailPartie2
             {
                 "Insérer un nouvel ouvrage",
                 "Rechercher un ouvrage",
-                "Statistiques"
+                "Statistiques",
+                "Réinitialisation de la collection ouvrages"
             };
 
 
@@ -96,7 +101,12 @@ namespace TravailPartie2
             { 
                 Inserer.Afficher,
                 Rechercher.Afficher,
-                AfficherStatistique
+                AfficherStatistique,
+                () => {
+                    BD.ResetData("ouvrages", "default-data.json");
+                    Console.WriteLine("\nRéinitialisation effectuée ! Appuyez sur une touche pour continuer...");
+                    Console.ReadKey();
+                }
             };
 
             return new Menu("Menu", options, actions);
@@ -405,24 +415,186 @@ namespace TravailPartie2
 
         private void RechercherOuvrageType()
         {
-            Console.WriteLine("\nRecherche d'un ouvrage selon le type... (à implémenter)");
+            string message = "";
+            List<BsonDocument> résultats = new List<BsonDocument>();
+
+            var collection = BD.ObtenirCollectionRaw("ouvrages");
+            var types = collection.Distinct<string>("type", FilterDefinition<BsonDocument>.Empty).ToList();
+
+            if (types.Count == 0)
+            {
+                Console.Write("Aucun type trouvé ! Appuyez sur une touche pour continuer...");
+                Console.ReadKey();
+                return;
+            }
+
+            Console.WriteLine("\n--- Types d'ouvrages disponibles ---\n");
+            for (int i = 0; i < types.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {types[i]}");
+            }
+
+            Console.Write("\nEntrez le numéro du type à rechercher : ");
+            if (!int.TryParse(Console.ReadLine(), out int choix) || choix < 1 || choix > types.Count)
+            {
+                Console.Write("Choix invalide ! Appuyez sur une touche pour continuer...");
+                Console.ReadKey();
+                return;
+            }
+
+            string typeChoisi = types[choix - 1];
+
+            var filtre = Builders<BsonDocument>.Filter.Eq("type", typeChoisi);
+            résultats = collection.Find(filtre).ToList();
+
+            message += $"--- Résultats de la recherche (Ouvrages de type : {typeChoisi}) ---\n";
+
+            foreach (var doc in résultats)
+            {
+                string titre = doc.GetValue("titre", "").AsString;
+                double prix = doc.GetValue("prix", 0.0).ToDouble();
+                bool dispo = doc.GetValue("dispo", false).ToBoolean();
+
+                message += $"{titre} ({typeChoisi})\n";
+                message += $"Prix       : {prix:F2} $\n";
+                message += $"Disponible : {(dispo ? "Oui" : "Non")}\n";
+
+                if (doc.Contains("détails") && doc["détails"].IsBsonDocument)
+                {
+                    var details = doc["détails"].AsBsonDocument;
+                    foreach (var champ in details.Elements)
+                    {
+                        message += $"{char.ToUpper(champ.Name[0])}{champ.Name.Substring(1)} : {champ.Value}\n";
+                    }
+                }
+
+                if (doc.Contains("exemplaires") && doc["exemplaires"].IsBsonArray)
+                {
+                    var exs = doc["exemplaires"].AsBsonArray;
+                    if (exs.Count > 0)
+                    {
+                        message += $"Exemplaires : {string.Join(", ", exs.Select(e => e.ToString()))}\n";
+                    }
+                }
+
+                message += "\n";
+            }
+
+            Tools.AfficherDansNotepad(message);
+            Console.WriteLine("\nUne nouvelle fenêtre du Bloc-notes a été ouverte pour afficher les résultats. Vous pouvez la consulter dès maintenant.");
+            Console.WriteLine("Appuyez sur une touche pour continue...");
             Console.ReadKey();
         }
 
         private void RechercherBdDessinateur()
         {
-            Console.WriteLine("\nRecherche d'une BD selon le dessinateur... (à implémenter)");
+            string message = "";
+            List<BsonDocument> résultats = new List<BsonDocument>();
+            var collection = BD.ObtenirCollectionRaw("ouvrages");
+
+            Console.Write("\nVeuillez inscrire le nom du dessinateur recherché : ");
+            string rechercheDessinateur = Console.ReadLine();
+
+            if (string.IsNullOrEmpty(rechercheDessinateur))
+            {
+                Console.Write("\nAucun valeur saisie ! Appuyez sur une touche pour recommencer...");
+                Console.ReadKey();
+                return;
+            }
+
+            string rechercheSécurisée = Regex.Escape(rechercheDessinateur);
+            var filtreType = Builders<BsonDocument>.Filter.Eq("type", "BD");
+            var filtreDessinateur = Builders<BsonDocument>.Filter.Regex(
+                "détails.dessinateur",
+                new BsonRegularExpression(rechercheSécurisée, "i") // non case sensitive
+            );
+            var filtreCombiné = Builders<BsonDocument>.Filter.And(filtreType, filtreDessinateur);
+
+            résultats = collection.Find(filtreCombiné).ToList();
+
+            message += $"--- Résultats de la recherche (par auteurs de BD) ---\n\n";
+
+            if (résultats == null || résultats.Count() == 0)
+            {
+                Console.Write("\nAucune valeur trouvée ! Appuyez sur une touche pour recommencer...");
+                Console.ReadKey();
+                return;
+            }
+
+            foreach (var doc in résultats)
+            {
+                string titre = doc.GetValue("titre", "").AsString;
+                double prix = doc.GetValue("prix", 0.0).ToDouble();
+                bool dispo = doc.GetValue("dispo", false).ToBoolean();
+                string type = doc.GetValue("type", "").AsString;
+
+                message += $"{titre} ({type})\n";
+                message += $"Prix       : {prix:F2} $\n";
+                message += $"Disponible : {(dispo ? "Oui" : "Non")}\n";
+
+                if (doc.Contains("détails") && doc["détails"].IsBsonDocument)
+                {
+                    var details = doc["détails"].AsBsonDocument;
+                    foreach (var champ in details.Elements)
+                    {
+                        message += $"{char.ToUpper(champ.Name[0])}{champ.Name.Substring(1)} : {champ.Value}\n";
+                    }
+                }
+
+                if (doc.Contains("exemplaires") && doc["exemplaires"].IsBsonArray)
+                {
+                    var exs = doc["exemplaires"].AsBsonArray;
+                    if (exs.Count > 0)
+                    {
+                        message += $"Exemplaires : {string.Join(", ", exs.Select(e => e.ToString()))}\n";
+                    }
+                }
+
+                message += "\n";
+            }
+            Tools.AfficherDansNotepad(message);
+            Console.WriteLine("\nUne nouvelle fenêtre du Bloc-notes a été ouverte pour afficher les résultats. Vous pouvez la consulter dès maintenant.");
+            Console.WriteLine("Appuyez sur une touche pour continue...");
             Console.ReadKey();
         }
 
         // -------------------------------------
         // Menu Statistique
         // -------------------------------------
-        
+
         private void AfficherStatistique()
         {
-            Console.WriteLine("\nAfficher le nombre d'ouvrage par type... (à implémenter)");
-            Console.WriteLine("\nAfficher le prix moyen par type d'ouvrage... (à implémenter)");
+            string message = "";
+            var pipeline = new BsonDocument[]
+            {
+                new BsonDocument("$group", new BsonDocument
+                {
+                    { "_id", "$type" },
+                    { "total", new BsonDocument("$sum", 1) },
+                    { "prixMoyen", new BsonDocument("$avg", "$prix") }
+                }),
+                new BsonDocument("$sort", new BsonDocument("_id", 1))
+            };
+
+            var collection = BD.ObtenirCollection("ouvrages");
+            var résultats = collection.Aggregate<BsonDocument>(pipeline).ToList();
+
+            message += ("--- Statistiques par type d'ouvrage ---\n");
+
+            foreach (var doc in résultats)
+            {
+                var type = doc["_id"].AsString;
+                var total = doc["total"].AsInt32;
+                var prixMoyen = doc["prixMoyen"].ToDouble();
+
+                message += ($"\n{type} :\n");
+                message += ($"--> Nb d'ouvrage(s) : {total}\n");
+                message += ($"--> prix moyen      : {prixMoyen:F2} $\n");
+            }
+
+            Tools.AfficherDansNotepad(message);
+            Console.WriteLine("\nUne nouvelle fenêtre du Bloc-notes a été ouverte pour afficher les résultats. Vous pouvez la consulter dès maintenant.");
+            Console.WriteLine("Appuyez sur une touche pour continue...");
             Console.ReadKey();
         }
     }
